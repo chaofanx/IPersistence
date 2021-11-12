@@ -3,6 +3,7 @@ package com.chaofan.session;
 import com.chaofan.pojo.Configuration;
 import com.chaofan.pojo.MappedStatement;
 
+import java.lang.reflect.*;
 import java.util.List;
 
 /**
@@ -57,6 +58,24 @@ public class DefaultSqlSession implements SqlSession {
         executor = new SimpleExecutor();
         MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
         return executor.update(configuration, mappedStatement, params);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getMapper(Class<T> mapperClass) {
+        //jdk动态代理
+        Object o = Proxy.newProxyInstance(DefaultSqlSession.class.getClassLoader(), new Class[]{mapperClass}, (proxy, method, args) -> {
+            String methodName = method.getName();
+            String className = method.getDeclaringClass().getName();
+            String statementId = className + "." + methodName;
+            //获取返回值类型
+            Type genericReturnType = method.getGenericReturnType();
+            if (genericReturnType instanceof ParameterizedType) {
+                return selectList(statementId, args);
+            }
+            return selectOne(statementId, args);
+        });
+        return (T) o;
     }
 
     @Override

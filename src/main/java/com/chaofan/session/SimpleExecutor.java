@@ -50,10 +50,10 @@ public class SimpleExecutor implements Executor {
         ResultSet resultSet = statement.executeQuery();
         String resultType = mappedStatement.getResultType();
         Class<?> resultTypeClass = getClassType(resultType);
-        Object o = resultTypeClass.getDeclaredConstructor().newInstance();
         //封装结果集
         List<Object> objects = new ArrayList<>();
         while (resultSet.next()) {
+            Object o = resultTypeClass.getDeclaredConstructor().newInstance();
             ResultSetMetaData metaData = resultSet.getMetaData();
             for (int i = 0; i < metaData.getColumnCount(); i++) {
                 //获取字段名

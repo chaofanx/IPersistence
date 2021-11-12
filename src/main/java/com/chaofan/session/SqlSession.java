@@ -51,6 +51,14 @@ public interface SqlSession {
     int delete(String statementId, Object params) throws Exception;
 
     /**
+     * 生成实现类
+     * @param mapperClass 待实现接口
+     * @param <T> 类型
+     * @return 动态代理类
+     */
+    <T> T getMapper(Class<T> mapperClass);
+
+    /**
      * 关闭连接
      */
     void close();
