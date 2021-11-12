@@ -26,24 +26,32 @@ public interface SqlSession {
      */
     <T> T selectOne(String statementId, Object... params) throws Exception;
 
-    <T> T selectOne(String statementId,Class<T> clazz, Object... params);
-
     /**
      * 更新内容
      * @param statementId sql的id
      * @param params 参数列表
      * @return 受影响的行数
      */
-    int update(String statementId, Object params);
+    int update(String statementId, Object params) throws Exception;
 
     /**
      * 保存对象
-     * @param statementId
-     * @param params
-     * @return
+     * @param statementId sql的id
+     * @param params 参数列表
+     * @return 受影响的行数
      */
-    int save(String statementId, Object params);
+    int save(String statementId, Object params) throws Exception;
 
-    int delete(String statementId, Object params);
+    /**
+     * 删除对象
+     * @param statementId sql的id
+     * @param params 参数列表
+     * @return 受影响的行数
+     */
+    int delete(String statementId, Object params) throws Exception;
 
+    /**
+     * 关闭连接
+     */
+    void close();
 }

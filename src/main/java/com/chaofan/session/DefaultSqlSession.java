@@ -13,6 +13,8 @@ public class DefaultSqlSession implements SqlSession {
 
     private final Configuration configuration;
 
+    private Executor executor;
+
     public DefaultSqlSession(Configuration configuration) {
         this.configuration = configuration;
     }
@@ -20,7 +22,7 @@ public class DefaultSqlSession implements SqlSession {
     @Override
     public <E> List<E> selectList(String statementId, Object... params) throws Exception {
         //调动simpleExecutor的query方法
-        SimpleExecutor executor = new SimpleExecutor();
+        executor = new SimpleExecutor();
         MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
         return executor.query(configuration, mappedStatement, params);
     }
@@ -37,23 +39,31 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
-    public <T> T selectOne(String statementId, Class<T> clazz, Object... params) {
-        return null;
+    public int update(String statementId, Object params) throws Exception {
+        executor = new SimpleExecutor();
+        MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
+        return executor.update(configuration, mappedStatement, params);
     }
 
     @Override
-    public int update(String statementId, Object params) {
-        return 0;
+    public int save(String statementId, Object params) throws Exception {
+        executor = new SimpleExecutor();
+        MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
+        return executor.update(configuration, mappedStatement, params);
     }
 
     @Override
-    public int save(String statementId, Object params) {
-        return 0;
+    public int delete(String statementId, Object params) throws Exception {
+        executor = new SimpleExecutor();
+        MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
+        return executor.update(configuration, mappedStatement, params);
     }
 
     @Override
-    public int delete(String statementId, Object params) {
-        return 0;
+    public void close() {
+        try {
+            executor.close();
+        }catch(Exception ignore){}
     }
 
 }
